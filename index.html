@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Sayang! 🎉</title>
+    
+    <!-- Anime.js for smooth animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <!-- Particles.js for background effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    
+    <!-- Confetti.js for celebration effects -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Howler.js for better audio control -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+    
+    <!-- Sweet Alert for POPUP -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Particles Background */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        /* Letter Envelope Section */
+        .envelope-scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .envelope-scene.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .envelope-container {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            margin: auto;
+            perspective: 800px;
+        }
+
+        /* Envelope Base */
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #d1a173;
+            border-radius: 8px;
+            z-index: 1;
+        }
+
+        .envelope-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #e6b98c;
+            clip-path: polygon(0 100%, 50% 50%, 100% 100%);
+            z-index: 3;
+        }
+
+        .envelope-front-left {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid #e8d5c4;
+            border-top: 100px solid transparent;
+            border-bottom: 100px solid transparent;
+        }
+
+        .envelope-front-right {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 0;
+            height: 0;
+            border-right: 160px solid #d4bfa8;
+            border-top: 100px solid transparent;
+            border-bottom: 100px solid transparent;
+        }
+
+        /* Envelope Flap */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: #c99a6b;
+            clip-path: polygon(0 0, 50% 100%, 100% 0);
+            transform-origin: top;
+            transition: transform 1s ease-in-out;
+            z-index: 4;
+        }
+
+        .envelope-container.open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        /* Heart Seal */
+        .heart-seal {
+            position: absolute;
+            top: 95px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.5);
+            z-index: 5;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .heart-seal:hover {
+            transform: translateX(-50%) scale(1.15);
+        }
+
+        /* Letter */
+        .letter {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            width: 450px;
+            height: 400px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            padding-top: 20px;
+            opacity: 0;
+            transition: all 1.5s ease-in-out;
+            overflow: hidden;
+            z-index: 5;
+        }
+
+        .letter-content {
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            text-align: left;
+            overflow-y: auto; /* <— ini yang bikin bisa discroll */
+            color: #333;
+            scrollbar-width: thin; /* agar scrollbar tidak besar */
+            scrollbar-color: #667eea #f0f0f0; /* warna scrollbar */
+        }
+
+        .envelope-container.open .letter {
+            transform: translateX(-50%) translateY(-15%);
+            opacity: 1;
+        }
+
+        .letter h2 {
+            font-family: 'Pacifico', cursive;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.7rem;
+            text-align: center;
+        }
+
+        .letter p {
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+
+        .letter strong {
+            color: #667eea;
+            font-size: 1rem;
+        }
+
+        .letter-signature {
+            margin-top: 20px;
+            font-style: italic;
+            color: #666;
+            text-align: right;
+            font-size: 0.85rem;
+        }
+
+        /* Close Letter Button */
+        .close-letter-btn {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .envelope-container.open .close-letter-btn {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .close-letter-btn:hover {
+            transform: translateX(-50%) translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        /* Click Hint */
+        .click-hint {
+            position: absolute;
+            bottom: -100px;
+            width: 500px;
+            left: 70%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 1.3rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: bounce 2s infinite;
+            font-weight: 600;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .envelope-container.open .click-hint {
+            display: none;
+        }
+
+        /* Music Control */
+        .music-control {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 10000;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50px;
+            padding: 15px 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .music-control:hover {
+            transform: scale(1.05);
+            background: white;
+        }
+
+        .music-control span {
+            font-size: 24px;
+        }
+
+        .music-control.playing span {
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Main Content */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        .main-content.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            color: white;
+            text-shadow: 3px 3px 8px rgba(0,0,0,0.4);
+            margin-bottom: 20px;
+            opacity: 0;
+        }
+
+        .hero .name {
+            font-family: 'Pacifico', cursive;
+            font-size: 5rem;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4d96ff);
+            background-size: 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+            opacity: 0;
+        }
+
+        .hero-subtitle {
+            color: white;
+            font-size: 1.4rem;
+            margin-top: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            opacity: 0;
+        }
+
+        /* Interactive Balloons */
+        .balloons-layer {
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .balloon {
+            position: absolute;
+            width: 80px;
+            height: 100px;
+            cursor: pointer;
+            pointer-events: all;
+            transition: transform 0.3s ease;
+        }
+
+        .balloon:hover {
+            transform: scale(1.15);
+        }
+
+        .balloon svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+        }
+
+        .balloon-string {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            width: 2px;
+            height: 50px;
+            background: rgba(255,255,255,0.5);
+            transform: translateX(-50%);
+        }
+
+        /* Balloon Message Popup */
+        .balloon-popup {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            z-index: 10001;
+            max-width: 450px;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: none;
+        }
+
+        .balloon-popup.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .balloon-popup h3 {
+            font-family: 'Pacifico', cursive;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .balloon-popup p {
+            color: #333;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+
+        .balloon-popup button {
+            padding: 12px 35px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .balloon-popup button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Cake Section */
+        .cake-section {
+            padding: 100px 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.98);
+            margin: 80px auto;
+            max-width: 1000px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .cake-section h2 {
+            font-family: 'Pacifico', cursive;
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .cake-instruction {
+            font-size: 1.3rem;
+            color: #666;
+            margin-bottom: 50px;
+            font-weight: 500;
+        }
+
+        .cake-container {
+            display: flex;
+            justify-content: center;
+            margin: 60px 0;
+            position: relative;
+        }
+
+        .cake {
+            position: relative;
+            width: 280px;
+            height: 320px;
+        }
+
+        .cake-layer {
+            position: absolute;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .layer1 {
+            width: 240px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            bottom: 0;
+            left: 20px;
+        }
+
+        .layer2 {
+            width: 200px;
+            height: 80px;
+            background: linear-gradient(135deg, #fecfef, #fbc2eb);
+            bottom: 70px;
+            left: 40px;
+        }
+
+        .layer3 {
+            width: 160px;
+            height: 80px;
+            background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+            bottom: 140px;
+            left: 60px;
+        }
+
+        .frosting {
+            position: absolute;
+            top: -8px;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: #fff;
+            border-radius: 20px;
+        }
+
+        .candles {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .candle {
+            position: relative;
+            width: 15px;
+            height: 70px;
+            background: linear-gradient(to bottom, #fff 0%, #f0f0f0 100%);
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .candle:hover {
+            transform: scale(1.05);
+        }
+
+        .candle::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: #ff6b6b;
+            border-radius: 50%;
+        }
+
+        .flame {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 25px;
+            height: 40px;
+            background: radial-gradient(ellipse at center, #ffd93d 0%, #ff6b6b 50%, transparent 70%);
+            border-radius: 50% 50% 0 0;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .candle.blown .flame {
+            opacity: 0;
+        }
+
+        .wish-message {
+            margin-top: 40px;
+            font-size: 1.5rem;
+            color: #667eea;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .wish-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Content Section */
+        .content {
+            max-width: 1000px;
+            margin: 80px auto;
+            padding: 80px 40px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .message-box {
+            text-align: center;
+            margin: 50px 0;
+        }
+
+        .message-box h2 {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+
+        .message-box p {
+            font-size: 1.2rem;
+            line-height: 1.9;
+            color: #444;
+            margin: 20px 0;
+        }
+
+        .heart-icon {
+            display: inline-block;
+            color: #ff6b6b;
+            font-size: 1.3rem;
+        }
+
+        /* Photo Gallery */
+        .gallery {
+            margin: 80px 0;
+        }
+
+        .gallery h2 {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .photo {
+            aspect-ratio: 1;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 3.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .photo .image{
+            object-fit: contain;
+            width: 100%;
+        }
+
+        .photo:hover {
+            transform: translateY(-10px) rotate(2deg);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .photo-note {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin-top: 30px;
+            font-size: 1.05rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero .name { font-size: 3rem; }
+            .hero-subtitle { font-size: 1.1rem; }
+            .envelope-container { transform: scale(0.85); }
+            .balloon { width: 60px; height: 75px; }
+            .cake-section, .content { padding: 50px 20px; margin: 40px 20px; }
+            .cake { transform: scale(0.8); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+
+    <!-- Music Control -->
+    <div class="music-control" id="musicControl">
+        <span id="musicIcon">🎵</span>
+    </div>
+
+    <!-- Envelope Scene -->
+    <div class="envelope-scene" id="envelopeScene">
+        <div class="envelope-wrapper">
+            <div class="envelope-container" id="envelopeContainer">
+            <div class="envelope">
+                <div class="envelope-back"></div>
+
+                <!-- Surat dikeluarkan dari envelope-back -->
+                <div class="letter">
+                <div class="letter-content">
+                    <h2>Untuk Cinta Hidupku 💕</h2>
+                    <p>Hai Sayang,</p>
+                    <p>Selamat ulang tahun! Di hari spesialmu ini, aku ingin mengatakan betapa beruntungnya aku memilikimu dalam hidupku.</p>
+                    <p>Setiap momen bersamamu adalah hadiah terindah. Senyummu yang selalu mencerahkan hariku, tawamu yang menghangatkan hatiku, dan kehadiranmu yang membuat segalanya lebih bermakna.</p>
+                    <p>Terima kasih telah menjadi alasan aku tersenyum setiap hari. Terima kasih sudah selalu ada untukku, di saat senang maupun susah.</p>
+                    <p><strong>Aku mencintaimu lebih dari yang bisa kata-kata ungkapkan. Selamat ulang tahun, Sayangku! ❤️</strong></p>
+                    <p class="letter-signature">Dengan cinta,<br>Yang selalu sayang kamu</p>
+                </div>
+                </div>
+
+                <div class="envelope-front">
+                <div class="envelope-front-left"></div>
+                <div class="envelope-front-right"></div>
+                </div>
+                <div class="envelope-flap"></div>
+            </div>
+
+            <div class="heart-seal" id="heartSeal">❤️</div>
+
+            <button class="close-letter-btn" id="closeLetterBtn">Lanjutkan 💌</button>
+            <div class="click-hint">👆 Klik hati untuk membuka surat</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Balloons Layer -->
+        <div class="balloons-layer" id="balloonsLayer"></div>
+
+        <!-- Balloon Popup -->
+        <div class="balloon-popup" id="balloonPopup">
+            <h3 id="popupTitle"></h3>
+            <p id="popupText"></p>
+            <button onclick="closeBalloonPopup()">Tutup</button>
+        </div>
+
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1 id="heroTitle">🎉 Happy Birthday 🎉</h1>
+            <div class="name" id="heroName">Sayangku!</div>
+            <p class="hero-subtitle" id="heroSubtitle">🎈 Coba deh Klik Balon, Harus semuanya ya! 🎈</p>
+        </div>
+
+        <!-- Cake Section -->
+        <div class="cake-section">
+            <h2>Tiup Lilinnya! 🎂</h2>
+            <p class="cake-instruction">Klik setiap lilin untuk meniup ✨</p>
+            <div class="cake-container">
+                <div class="cake">
+                    <div class="cake-layer layer1">
+                        <div class="frosting"></div>
+                    </div>
+                    <div class="cake-layer layer2">
+                        <div class="frosting"></div>
+                    </div>
+                    <div class="cake-layer layer3">
+                        <div class="frosting"></div>
+                    </div>
+                    <div class="candles" id="candles">
+                        <div class="candle" onclick="blowCandle(this)">
+                            <div class="flame"></div>
+                        </div>
+                        <div class="candle" onclick="blowCandle(this)">
+                            <div class="flame"></div>
+                        </div>
+                        <div class="candle" onclick="blowCandle(this)">
+                            <div class="flame"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="wish-message" id="wishMessage">
+                ✨ Semoga semua impianmu terwujud! ✨
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="message-box">
+                <h2>Kenapa Aku Sayang Kamu? 💖</h2>
+                <p>Karena senyummu yang selalu mencerahkan hariku <span class="heart-icon">❤️</span></p>
+                <p>Karena kamu selalu ada untukku di saat senang maupun susah</p>
+                <p>Karena setiap momen bersamamu terasa istimewa</p>
+                <p>Dan karena kamu adalah orang terbaik yang pernah hadir dalam hidupku</p>
+            </div>
+
+            <!-- Gallery -->
+            <div class="gallery">
+                <h2>Kenangan Kita 📸</h2>
+                <div class="photo-grid">
+                    <div class="photo">
+                        <img class="image" src="Lovely/IMG-20251110-WA0038.jpg" alt="foto1">
+                    </div>
+                    <div class="photo">
+                        <img class="image" src="Lovely/IMG-20251110-WA0039.jpg" alt="foto2">
+                    </div>
+                    <div class="photo">
+                        <img class="image" src="Lovely/IMG-20251110-WA0040.jpg" alt="foto3">
+                    </div>
+                    <div class="photo">
+                        <img class="image" src="Lovely/IMG-20251110-WA0041.jpg" alt="foto4">
+                    </div>
+                    <div class="photo">
+                        <img class="image" src="Lovely/IMG-20251110-WA0042.jpg" alt="foto5">
+                    </div>
+                    <div class="photo">
+                        <img class="image" src="Lovely/IMG-20251110-WA0043.jpg" alt="foto6">
+                    </div>
+                    <div class="photo">
+                        <img class="image" src="Lovely/IMG-20251110-WA0044.jpg" alt="foto7">
+                    </div>
+                    <div class="photo">
+                        <img class="image" src="Lovely/IMG-20251110-WA0045.jpg" alt="foto8">
+                    </div>
+                    <div class="photo">
+                        <img class="image" src="Lovely/IMG-20251110-WA0046.jpg" alt="foto8">
+                    </div>
+                </div>
+            </div>
+
+            <div class="message-box">
+                <h2>Janji Untukmu 💍</h2>
+                <p>Aku berjanji akan selalu ada untukmu</p>
+                <p>Aku berjanji akan selalu membuatmu tersenyum</p>
+                <p>Aku berjanji akan mencintaimu dengan sepenuh hati</p>
+                <p><strong>Selamat ulang tahun sekali lagi, Sayangku! 🎊</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener("load", () => {
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: "instant" });
+            }, 100);
+        });
+        // Romantic messages for balloons
+        const romanticMessages = [
+            { title: "Cinta Pertamaku 💕", text: "Kamu adalah cinta pertama dan terakhirku. Tidak ada yang bisa menggantikan posisimu di hatiku. Setiap hari bersamamu adalah anugerah terindah." },
+            { title: "Senyummu 😊", text: "Senyummu adalah alasan favoritku untuk bangun setiap pagi. Kamu membuat hidupku penuh warna dan kebahagiaan yang tak terhingga!" },
+            { title: "Bersamamu 🌈", text: "Setiap detik bersamamu terasa seperti keajaiban. Kamu membuat dunia ini lebih indah dengan kehadiranmu yang luar biasa." },
+            { title: "Terima Kasih 🙏", text: "Terima kasih sudah menjadi bagian terbaik dalam hidupku. Kamu adalah hadiah terindah yang pernah Tuhan berikan untukku." },
+            { title: "Selamanya 💍", text: "Aku ingin menghabiskan setiap hari sisaku bersamamu. Sampai rambut kita memutih dan tua nanti, aku akan tetap mencintaimu, Sayang!" },
+            { title: "Kamu Spesial ✨", text: "Di antara jutaan orang di dunia ini, kamu adalah yang paling spesial bagiku. Kamu satu-satunya yang membuat hatiku berdebar!" }
+        ];
+
+        // Initialize Particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#ffffff' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: { enable: false },
+                move: { enable: true, speed: 2, direction: 'none', random: true, out_mode: 'out' }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' } }
+            }
+        });
+
+        // Music Control (Howler.js ready but using native audio for now)
+        const musicControl = document.getElementById('musicControl');
+        const musicIcon = document.getElementById('musicIcon');
+        let isPlaying = false;
+
+        // Create audio element
+        const audio = new Audio('Anugerah Terindah - Andmesh (Saxophone Cover by Dori Wirawan).mp3');
+        audio.loop = true;
+
+        musicControl.addEventListener('click', () => {
+            if (isPlaying) {
+                audio.pause();
+                musicIcon.textContent = '🎵';
+                musicControl.classList.remove('playing');
+            } else {
+                audio.play();
+                musicIcon.textContent = '🎵';
+                musicControl.classList.add('playing');
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // Envelope Animation with Anime.js
+        const envelopeContainer = document.getElementById('envelopeContainer');
+        const heartSeal = document.getElementById('heartSeal');
+        const closeLetterBtn = document.getElementById('closeLetterBtn');
+        const envelopeScene = document.getElementById('envelopeScene');
+        const mainContent = document.getElementById('mainContent');
+        let envelopeOpened = false;
+
+        // Animate envelope on load
+        anime({
+            targets: '.envelope-wrapper',
+            translateY: [50, 0],
+            opacity: [0, 1],
+            duration: 1000,
+            easing: 'easeOutElastic(1, .8)'
+        });
+
+        // Click to open envelope
+        heartSeal.addEventListener('click', () => {
+            if (!envelopeOpened) {
+                envelopeContainer.classList.add('open');
+                envelopeOpened = true;
+                
+                // Play music
+                if (!isPlaying) {
+                    audio.play();
+                    musicIcon.textContent = '🎵';
+                    musicControl.classList.add('playing');
+                    isPlaying = true;
+                }
+
+                // Animate heart seal
+                anime({
+                    targets: '#heartSeal',
+                    scale: [1, 1.3, 0],
+                    rotate: [0, 360],
+                    duration: 800,
+                    easing: 'easeInOutQuad'
+                });
+
+                // Confetti celebration
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        });
+
+        // Close letter and go to main content
+        closeLetterBtn.addEventListener('click', () => {
+            anime({
+                targets: '.envelope-scene',
+                opacity: 0,
+                duration: 800,
+                easing: 'easeInOutQuad',
+                complete: () => {
+                    envelopeScene.classList.add('hidden');
+                    mainContent.classList.add('visible');
+                    initMainContent();
+                }
+            });
+        });
+
+        // Initialize main content animations
+        function initMainContent() {
+            // Animate hero section
+            anime.timeline()
+                .add({
+                    targets: '#heroTitle',
+                    translateY: [-50, 0],
+                    opacity: [0, 1],
+                    duration: 1000,
+                    easing: 'easeOutElastic(1, .8)'
+                })
+                .add({
+                    targets: '#heroName',
+                    scale: [0, 1],
+                    opacity: [0, 1],
+                    duration: 1000,
+                    easing: 'easeOutElastic(1, .6)'
+                }, '-=500')
+                .add({
+                    targets: '#heroSubtitle',
+                    translateY: [20, 0],
+                    opacity: [0, 1],
+                    duration: 800,
+                    easing: 'easeOutQuad'
+                }, '-=500');
+
+            // Create balloons
+            createBalloons();
+
+            // Animate sections on scroll
+            animateOnScroll();
+
+            // Start continuous confetti
+            setInterval(() => {
+                confetti({
+                    particleCount: 50,
+                    spread: 60,
+                    origin: { x: Math.random(), y: Math.random() * 0.5 }
+                });
+            }, 10000);
+        }
+
+        // Create Interactive Balloons
+        function createBalloons() {
+            const balloonsLayer = document.getElementById('balloonsLayer');
+            const colors = ['#ff6b6b', '#ffd93d', '#6bcf7f', '#4d96ff', '#ff6bff', '#ff9a9e'];
+            
+            romanticMessages.forEach((message, index) => {
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                
+                // Random position
+                const left = 10 + (index * 15);
+                const top = 15 + (Math.random() * 50);
+                
+                balloon.style.left = left + '%';
+                balloon.style.top = top + '%';
+                
+                // Create SVG balloon
+                balloon.innerHTML = `
+                    <svg viewBox="0 0 100 120">
+                        <ellipse cx="50" cy="50" rx="40" ry="50" fill="${colors[index]}" opacity="0.9"/>
+                        <path d="M50 100 Q45 110, 50 115 Q55 110, 50 100" fill="${colors[index]}" opacity="0.7"/>
+                    </svg>
+                    <div class="balloon-string"></div>
+                `;
+                
+                balloon.dataset.index = index;
+                
+                // Click event
+                balloon.addEventListener('click', function() {
+                    showBalloonMessage(index);
+                    
+                    // Animate balloon away
+                    anime({
+                        targets: this,
+                        translateY: -1000,
+                        rotate: Math.random() * 360,
+                        opacity: 0,
+                        duration: 1500,
+                        easing: 'easeInQuad',
+                        complete: () => this.remove()
+                    });
+
+                    // Confetti
+                    confetti({
+                        particleCount: 50,
+                        spread: 70,
+                        origin: { 
+                            x: parseFloat(this.style.left) / 100, 
+                            y: parseFloat(this.style.top) / 100 
+                        }
+                    });
+                });
+                
+                balloonsLayer.appendChild(balloon);
+                
+                // Animate balloon entrance
+                anime({
+                    targets: balloon,
+                    translateY: [100, 0],
+                    opacity: [0, 1],
+                    duration: 1000,
+                    delay: index * 200,
+                    easing: 'easeOutElastic(1, .8)'
+                });
+
+                // Floating animation
+                anime({
+                    targets: balloon,
+                    translateY: [-10, 10],
+                    duration: 3000 + (index * 500),
+                    direction: 'alternate',
+                    loop: true,
+                    easing: 'easeInOutSine'
+                });
+            });
+        }
+
+        // Show Balloon Message
+        function showBalloonMessage(index) {
+            const popup = document.getElementById('balloonPopup');
+            const message = romanticMessages[index];
+            
+            document.getElementById('popupTitle').textContent = message.title;
+            document.getElementById('popupText').textContent = message.text;
+            
+            // Reset any inline styles
+            popup.style.top = '50%';
+            popup.style.left = '50%';
+            popup.style.transform = 'translate(-50%, -50%)';
+            
+            popup.classList.add('show');
+            
+            anime({
+                targets: '#balloonPopup',
+                scale: [0, 1],
+                duration: 500,
+                easing: 'easeOutElastic(1, .6)'
+            });
+        }
+
+        function closeBalloonPopup() {
+            const popup = document.getElementById('balloonPopup');
+            
+            anime({
+                targets: '#balloonPopup',
+                scale: [1, 0],
+                duration: 300,
+                easing: 'easeInQuad',
+                complete: () => {
+                    popup.classList.remove('show');
+                    // Reset transform
+                    popup.style.transform = 'translate(-50%, -50%)';
+                }
+            });
+        }
+
+        // Blow Candle with smoke effect
+        let candlesBlown = 0;
+        function blowCandle(candle) {
+            if (candle.classList.contains('blown')) return;
+            
+            candle.classList.add('blown');
+            candlesBlown++;
+            
+            // Animate flame out
+            anime({
+                targets: candle.querySelector('.flame'),
+                opacity: 0,
+                scale: [1, 0.5],
+                duration: 300,
+                easing: 'easeOutQuad'
+            });
+
+            // Smoke effect
+            createSmoke(candle);
+            
+            // Confetti on each blow
+            confetti({
+                particleCount: 30,
+                spread: 50,
+                origin: { y: 0.7 }
+            });
+            
+            // Check if all candles blown
+            if (candlesBlown === 3) {
+                setTimeout(() => {
+                    const wishMessage = document.getElementById('wishMessage');
+                    wishMessage.classList.add('show');
+                    
+                    anime({
+                        targets: '#wishMessage',
+                        translateY: [20, 0],
+                        opacity: [0, 1],
+                        duration: 1000,
+                        easing: 'easeOutElastic(1, .8)'
+                    });
+
+                    // Big confetti celebration
+                    const duration = 3000;
+                    const end = Date.now() + duration;
+
+                    (function frame() {
+                        confetti({
+                            particleCount: 7,
+                            angle: 60,
+                            spread: 55,
+                            origin: { x: 0 }
+                        });
+                        confetti({
+                            particleCount: 7,
+                            angle: 120,
+                            spread: 55,
+                            origin: { x: 1 }
+                        });
+
+                        if (Date.now() < end) {
+                            requestAnimationFrame(frame);
+                        }
+                    }());
+                    
+                    setTimeout(() => {
+                        Swal.fire({
+                            title: '🎉 Yeay!',
+                            text: 'Semua lilin sudah ditiup! Selamat ulang tahun sayang! ❤️',
+                            confirmButtonText: '💖 Terima kasih!',
+                            background: '#fff',
+                            color: '#333',
+                            confirmButtonColor: '#667eea',
+                            customClass: {
+                            popup: 'rounded-3xl shadow-2xl'
+                            }
+                        });
+                    }, 500);
+                }, 500);
+            }
+        }
+
+        // Create smoke particles
+        function createSmoke(candle) {
+            const rect = candle.getBoundingClientRect();
+            
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const smoke = document.createElement('div');
+                    smoke.style.position = 'fixed';
+                    smoke.style.left = (rect.left + rect.width / 2) + 'px';
+                    smoke.style.top = rect.top + 'px';
+                    smoke.style.width = '15px';
+                    smoke.style.height = '15px';
+                    smoke.style.background = 'rgba(150, 150, 150, 0.4)';
+                    smoke.style.borderRadius = '50%';
+                    smoke.style.pointerEvents = 'none';
+                    smoke.style.zIndex = '9999';
+                    document.body.appendChild(smoke);
+                    
+                    anime({
+                        targets: smoke,
+                        translateY: -100,
+                        translateX: (Math.random() - 0.5) * 50,
+                        scale: [1, 2],
+                        opacity: [0.4, 0],
+                        duration: 1500,
+                        easing: 'easeOutQuad',
+                        complete: () => smoke.remove()
+                    });
+                }, i * 100);
+            }
+        }
+
+        // Animate elements on scroll
+        function animateOnScroll() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        anime({
+                            targets: entry.target,
+                            translateY: [50, 0],
+                            opacity: [0, 1],
+                            duration: 1000,
+                            easing: 'easeOutQuad'
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.cake-section, .content, .message-box, .gallery').forEach(el => {
+                el.style.opacity = '0';
+                observer.observe(el);
+            });
+        }
+
+        // Add hover effects to photos
+        document.querySelectorAll('.photo').forEach((photo, index) => {
+            photo.addEventListener('mouseenter', function() {
+                anime({
+                    targets: this,
+                    scale: 1.05,
+                    rotate: 3,
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+            });
+
+            photo.addEventListener('mouseleave', function() {
+                anime({
+                    targets: this,
+                    scale: 1,
+                    rotate: 0,
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
